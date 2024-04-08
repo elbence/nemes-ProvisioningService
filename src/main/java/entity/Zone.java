@@ -1,9 +1,6 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -14,9 +11,10 @@ public class Zone {
     @GeneratedValue
     private Long id;
 
-    private int center;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Coordinate center;
     private int radius;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Coordinate> polygons;
 
     public Zone() {
@@ -30,7 +28,7 @@ public class Zone {
         return id;
     }
 
-    public int getCenter() {
+    public Coordinate getCenter() {
         return center;
     }
 
@@ -42,7 +40,7 @@ public class Zone {
         return polygons;
     }
 
-    public void setCenter(int center) {
+    public void setCenter(Coordinate center) {
         this.center = center;
     }
 
@@ -52,5 +50,15 @@ public class Zone {
 
     public void setPolygons(List<Coordinate> polygon) {
         this.polygons = polygon;
+    }
+
+    @Override
+    public String toString() {
+        return "Zone{" +
+                "id=" + id +
+                ", center=" + center +
+                ", radius=" + radius +
+                ", polygons=" + polygons +
+                '}';
     }
 }

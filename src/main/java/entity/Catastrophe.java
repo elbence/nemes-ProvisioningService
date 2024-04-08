@@ -1,8 +1,6 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,30 +8,22 @@ import java.util.List;
 @Entity
 public class Catastrophe {
     @Id
-    private String identifier;
-    private String severity;
-    @Id
-    private String completeName;
+    @GeneratedValue
+    private Long id;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Event event;
+    private String name;
     private String description;
     private LocalDate startDate;
     private LocalDate lastValidDate;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Zone> zone;
 
 
     public Catastrophe() {}
 
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public String getSeverity() {
-        return severity;
-    }
-
-    public String getCompleteName() {
-        return completeName;
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
@@ -48,18 +38,8 @@ public class Catastrophe {
         return lastValidDate;
     }
 
-
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
-
-    public void setCompleteName(String completeName) {
-        this.completeName = completeName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setDescription(String description) {
@@ -81,5 +61,34 @@ public class Catastrophe {
 
     public void setZone(List<Zone> zone) {
         this.zone = zone;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    @Override
+    public String toString() {
+        return "Catastrophe{" +
+                "id=" + id +
+                ", event=" + event +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", lastValidDate=" + lastValidDate +
+                ", zone=" + zone +
+                '}';
     }
 }

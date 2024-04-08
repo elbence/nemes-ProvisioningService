@@ -6,8 +6,7 @@ import jakarta.persistence.Persistence;
 public class Main {
     public static void main(String[] args) {
         Catastrophe catastrophe = new Catastrophe();
-        catastrophe.setIdentifier("A1");
-        catastrophe.setCompleteName("C1");
+        catastrophe.setName("C1");
 
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
 

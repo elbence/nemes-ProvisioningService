@@ -7,9 +7,10 @@
         <class>entity.Catastrophe</class>
         <class>entity.Zone</class>
         <class>entity.Coordinate</class>
+        <class>entity.Event</class>
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://172.17.0.2:5432/nemes"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://172.18.0.2:5432/nemes"/>
             <property name="jakarta.persistence.jdbc.user" value="nemes"/>
             <property name="jakarta.persistence.jdbc.password" value="nemes"/>
             <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
