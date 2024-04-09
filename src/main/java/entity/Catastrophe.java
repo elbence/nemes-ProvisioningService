@@ -3,21 +3,21 @@ package entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 public class Catastrophe {
     @Id
-    @GeneratedValue
-    private Long id;
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Event event;
+    @Id
     private String name;
     private String description;
+    @Id
     private LocalDate startDate;
     private LocalDate lastValidDate;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Zone> zone;
+    @Id
+    @OneToOne(cascade = CascadeType.ALL)
+    private Zone zone;
 
 
     public Catastrophe() {}
@@ -55,20 +55,12 @@ public class Catastrophe {
     }
 
 
-    public List<Zone> getZone() {
+    public Zone getZone() {
         return zone;
     }
 
-    public void setZone(List<Zone> zone) {
+    public void setZone(Zone zone) {
         this.zone = zone;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Event getEvent() {
@@ -82,8 +74,7 @@ public class Catastrophe {
     @Override
     public String toString() {
         return "Catastrophe{" +
-                "id=" + id +
-                ", event=" + event +
+                "event=" + event +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", startDate=" + startDate +

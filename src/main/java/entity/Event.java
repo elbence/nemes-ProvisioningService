@@ -1,15 +1,20 @@
 package entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+
+
+@NamedQueries({
+        @NamedQuery(name = "findById", query = "SELECT e FROM Event e WHERE e.name = :name AND e.severity = :severity")
+})
 
 @Entity
 public class Event {
     @Id
-    @GeneratedValue
-    private Long id;
     private String name;
+    @Id
     private String severity;
     private String description;
 
@@ -40,19 +45,10 @@ public class Event {
         this.severity = severity;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
     @Override
     public String toString() {
         return "Event{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", severity='" + severity + '\'' +
                 ", description='" + description + '\'' +
                 '}';

@@ -23,8 +23,6 @@ import java.util.regex.Pattern;
 
 public class TimeController {
 
-
-
     // ============================================= ACTUAL CLASS RESPONSABILITIES =============================================
 
     public static long realStartTime;
@@ -109,7 +107,7 @@ public class TimeController {
                 // Get catastrophe name
                 String name = catastropheAct.getString("areaDesc") + " - " + event.getName();
 
-                // Get zones
+                // Get zones FIXME should do a for loop traversing zones...
                 Object rawCoordinates = catastropheAct.get("polygon");
                 String coordinatesAsString;
                 if (rawCoordinates instanceof JSONArray) coordinatesAsString = ((JSONArray) rawCoordinates).getString(0);
@@ -122,9 +120,7 @@ public class TimeController {
                 catastrophe.setDescription("-");
                 catastrophe.setStartDate(LocalDate.now());
                 catastrophe.setLastValidDate(LocalDate.now());
-                List<Zone> zones = new ArrayList<>();
-                zones.add(zone);
-                catastrophe.setZone(zones);
+                catastrophe.setZone(zone);
                 catastropheList.add(catastrophe);
             }
         }
@@ -164,15 +160,24 @@ public class TimeController {
     private static void insertCatastrophesIntoDatabase(List<Catastrophe> catastrophes) {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            for (Catastrophe catastrophe : catastrophes) {
-                System.out.println(" * Saving: " + catastrophe.toString());
-                entityManager.getTransaction().begin();
-                entityManager.persist(catastrophe);
-                entityManager.getTransaction().commit();
+        for (Catastrophe catastrophe : catastrophes) {
+            System.out.println(" * Saving: " + catastrophe.toString());
+            // Get event if in db
+            Event catastropheEvent = catastrophe.getEvent();
+            Event dbEvent =  entityManager.createNamedQuery("findById", Event.class)
+                    .setParameter("name", catastropheEvent.getName())
+                    .setParameter("severity", catastropheEvent.getSeverity())
+                    .getSingleResult();
+            if (dbEvent != null) {
+                System.out.println("   - Updating event to found in db: " + dbEvent.toString());
+                catastrophe.setEvent(dbEvent);
+            } else {
+                catastrophe.setEvent(catastropheEvent);
             }
-        } catch (Exception ignored) {
-            System.out.println(ignored.getMessage());
+            // Save catastrophe
+            entityManager.getTransaction().begin();
+            entityManager.persist(catastrophe);
+            entityManager.getTransaction().commit();
         }
         entityManager.close();
         entityManagerFactory.close();
