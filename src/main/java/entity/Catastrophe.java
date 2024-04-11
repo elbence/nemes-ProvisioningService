@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-//@IdClass(CatastropheKey.class)
 public class Catastrophe {
     @Id
     @ManyToOne(cascade = CascadeType.PERSIST)
