@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+//@IdClass(CatastropheKey.class)
 public class Catastrophe {
     @Id
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -18,7 +19,6 @@ public class Catastrophe {
     @Id
     @OneToOne(cascade = CascadeType.ALL)
     private Zone zone;
-
 
     public Catastrophe() {}
 
