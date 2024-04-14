@@ -13,7 +13,7 @@ public class DBManager {
         EntityManagerFactory entityManagerFactory = EntityManagerFactoryGenerator.getFactory();
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         for (Catastrophe catastrophe : catastrophes) {
-            System.out.println(" * Saving: " + catastrophe.toString());
+            // System.out.println(" * Saving: " + catastrophe.toString());
             // Get event if in db
             Event catastropheEvent = catastrophe.getEvent();
             Event dbEvent;
@@ -22,10 +22,10 @@ public class DBManager {
                         .setParameter("name", catastropheEvent.getEventName())
                         .setParameter("severity", catastropheEvent.getSeverity())
                         .getSingleResult();
-                System.out.println("   - Updating event to found in db: " + dbEvent.toString());
+                // System.out.println("   - Updating event to found in db: " + dbEvent.toString());
                 catastrophe.setEvent(dbEvent);
             } catch (Exception ignored) {
-                System.out.println("     > Event not found or not included yet");
+                // System.out.println("     > Event not found or not included yet");
                 catastrophe.setEvent(catastropheEvent);
             }
             // Save catastrophe

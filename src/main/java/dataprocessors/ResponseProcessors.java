@@ -10,6 +10,7 @@ import org.json.XML;
 
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class ResponseProcessors {
 
-    public static List<JSONObject> processResponseIntoJSONObjectList(HttpResponse<String> downloadRes) {
+    public static List<JSONObject> processAllAlertsInXmlToJsonList(HttpResponse<String> downloadRes) {
         String regex = "(?s)<alert[^>]*>.*?</alert>";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(downloadRes.body());
@@ -44,13 +45,19 @@ public class ResponseProcessors {
             event = new Event();
             event.setEventName(catastropheBaseInfoObject.getJSONObject("eventCode").getString("value"));
             event.setSeverity(severity);
-//            LocalDate dateStart = xxx;  // TODO
-//            LocalDate endDate = xxx;  // TODO
+
+            // Get dates
+            String startDateString = catastropheBaseInfoObject.getString("effective");
+            String endDateString = catastropheBaseInfoObject.getString("expires");
+            LocalDate startDate = extractLocalDateFromString(startDateString);
+            LocalDate endDate = extractLocalDateFromString(endDateString);
 
             Object rawCatastrophes = catastropheBaseInfoObject.get("area");
             JSONArray alertCatastrophes = new JSONArray(0);
             if (rawCatastrophes instanceof JSONArray) alertCatastrophes = (JSONArray) rawCatastrophes;
             else if (rawCatastrophes instanceof JSONObject) alertCatastrophes.put(rawCatastrophes);
+
+            System.out.print(alertCatastrophes.length() + ", ");
 
             for (int i = 0; i < alertCatastrophes.length(); i++) {
                 JSONObject catastropheAct = alertCatastrophes.getJSONObject(i);
@@ -69,14 +76,23 @@ public class ResponseProcessors {
                 catastrophe.setEvent(event);
                 catastrophe.setName(name);
                 catastrophe.setDescription("-");
-                catastrophe.setStartDate(LocalDate.now());
-                catastrophe.setLastValidDate(LocalDate.now());
+                catastrophe.setStartDate(startDate);
+                catastrophe.setLastValidDate(endDate);
                 catastrophe.setZone(zone);
                 catastropheList.add(catastrophe);
             }
         }
         return catastropheList;
     }
+
+    public static LocalDate extractLocalDateFromString(String dateString) {
+        // Parse the input string to an OffsetDateTime
+        OffsetDateTime offsetDateTime = OffsetDateTime.parse(dateString);
+
+        // Extract LocalDate from OffsetDateTime
+        return offsetDateTime.toLocalDate();
+    }
+
 
     public static Zone zoneFromRawStringPolygon(String polygonFromAemetApi) {
         Coordinate center = new Coordinate(); // Assigning 0 to center as per your requirement

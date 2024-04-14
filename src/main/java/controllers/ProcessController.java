@@ -35,11 +35,15 @@ public class ProcessController {
         if (downloadRes.statusCode() != 200) throw new IOException("Real data fetching gone wrong after redirect");
 
         System.out.println("Processing actual data (raw xml string -> json)...");
-        List<JSONObject> alertsInJson = ResponseProcessors.processResponseIntoJSONObjectList(downloadRes);
+        List<JSONObject> alertsInJson = ResponseProcessors.processAllAlertsInXmlToJsonList(downloadRes);
+        System.out.print("Found " + alertsInJson.size() + " alerts with following numbers of catastrophes each: ");
         List<Catastrophe> catastrophes = ResponseProcessors.catastrophesFromJsonAlertList(alertsInJson);
+        System.out.println("\nFound total catastrophes: " + catastrophes.size());
 
         System.out.println("Saving data to db...");
         DBManager.insertCatastrophesIntoDatabase(catastrophes);
+
+        System.out.println("End of update.");
 
     }
 
