@@ -95,9 +95,9 @@ public class ResponseProcessors {
 
 
     public static Zone zoneFromRawStringPolygon(String polygonFromAemetApi) {
-        Coordinate center = new Coordinate(); // Assigning 0 to center as per your requirement
         int radius = 0; // Assigning 0 to radius as per your requirement
         List<Coordinate> coordinateList = parseCoordinates(polygonFromAemetApi);
+        Coordinate center = calculateCenterCoordinate(coordinateList); // Calculate center of the polygon
         Zone zone = new Zone();
         zone.setCenter(center);
         zone.setRadius(radius);
@@ -118,6 +118,29 @@ public class ResponseProcessors {
             coordinateList.add(coord);
         }
         return coordinateList;
+    }
+
+    public static Coordinate calculateCenterCoordinate(List<Coordinate> coordinates) {
+        if (coordinates == null || coordinates.isEmpty()) {
+            throw new IllegalArgumentException("Coordinate list cannot be null or empty");
+        }
+
+        float sumLat = 0;
+        float sumLon = 0;
+
+        for (Coordinate coordinate : coordinates) {
+            sumLat += coordinate.getLat();
+            sumLon += coordinate.getLon();
+        }
+
+        float centerLat = sumLat / coordinates.size();
+        float centerLon = sumLon / coordinates.size();
+
+        Coordinate centerCoordinate = new Coordinate();
+        centerCoordinate.setLat(centerLat);
+        centerCoordinate.setLon(centerLon);
+
+        return centerCoordinate;
     }
 
 }
