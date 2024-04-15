@@ -6,7 +6,7 @@ import java.util.*;
 
 public class TimeController {
 
-    private final static long SECONDS_IN_MINUTES = 20;
+    private final static long SECONDS_IN_MINUTES = 10;
 
     // ============================================= ACTUAL CLASS RESPONSABILITIES =============================================
 
