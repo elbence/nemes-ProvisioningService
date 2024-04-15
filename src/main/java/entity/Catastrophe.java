@@ -8,6 +8,9 @@ import java.time.LocalDate;
 public class Catastrophe {
     @Id
     @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumns({
+            @JoinColumn(name = "eventname", referencedColumnName = "eventname"),
+            @JoinColumn(name = "serverity", referencedColumnName = "severity")})
     private Event event;
     @Id
     private String name;
