@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-//@IdClass(CatastropheKey.class)
 public class Catastrophe {
     @Id
     @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumns({
+            @JoinColumn(name = "eventname", referencedColumnName = "eventname"),
+            @JoinColumn(name = "serverity", referencedColumnName = "severity")})
     private Event event;
     @Id
     private String name;
@@ -18,6 +20,7 @@ public class Catastrophe {
     private LocalDate lastValidDate;
     @Id
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "zone_id")
     private Zone zone;
 
     public Catastrophe() {}
