@@ -20,6 +20,7 @@ public class Catastrophe {
     private LocalDate lastValidDate;
     @Id
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "zone_id")
     private Zone zone;
 
     public Catastrophe() {}
