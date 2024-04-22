@@ -31,7 +31,9 @@ public class Catastrophe {
     private LocalDate lastValidDate;
     @Id
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "zone_id")
+    @JoinColumns({
+            @JoinColumn(name = "zonecenterlat", referencedColumnName = "centerlat"),
+            @JoinColumn(name = "zonecenterlon", referencedColumnName = "centerlon")})
     private Zone zone;
 
     public Catastrophe() {}

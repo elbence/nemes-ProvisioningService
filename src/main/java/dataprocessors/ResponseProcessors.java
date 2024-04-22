@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 
+import java.math.BigDecimal;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -98,11 +99,18 @@ public class ResponseProcessors {
         int radius = 0; // Assigning 0 to radius as per your requirement
         List<Coordinate> coordinateList = parseCoordinates(polygonFromAemetApi);
         Coordinate center = calculateCenterCoordinate(coordinateList); // Calculate center of the polygon
+        // cut center to 2 decimals
+        System.out.println("[NOTIFY CENTER] " + center.toString());
         Zone zone = new Zone();
-        zone.setCenter(center);
+        zone.setCenterLat(truncToStringWithTwoDecimals(center.getLat()));
+        zone.setCenterLon(truncToStringWithTwoDecimals(center.getLon()));
         zone.setRadius(radius);
         zone.setPolygons(coordinateList);
         return zone;
+    }
+
+    private static BigDecimal truncToStringWithTwoDecimals(float value) {
+        return BigDecimal.valueOf(Float.parseFloat(String.format("%.4f", value)));
     }
 
     public static List<Coordinate> parseCoordinates(String polygonString) {
