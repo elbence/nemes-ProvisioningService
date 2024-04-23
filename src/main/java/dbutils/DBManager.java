@@ -16,16 +16,18 @@ public class DBManager {
         for (Catastrophe catastrophe : catastrophes) {
             System.out.println(" * Saving: " + catastrophe.toString());
             // Get catastrophe if in db
-            catastrophe = getCatastropheFromDb(catastrophe, entityManager);
+            Catastrophe dbCatastrophe = getCatastropheFromDb(catastrophe, entityManager);
 
-            // Get Event if in db - maybe do only if catastrophe was not in db ? TODO Consider
-            Event catastropheEvent = getEventFromDb(catastrophe, entityManager);
-            catastrophe.setEvent(catastropheEvent);
+            if (dbCatastrophe != null) catastrophe = dbCatastrophe; // if in db assign
+            else { // if not, check for the rest of the components in the db
+                // Get Event if in db
+                Event catastropheEvent = getEventFromDb(catastrophe, entityManager);
+                catastrophe.setEvent(catastropheEvent);
 
-            // Get Zone if in db
-            Zone catastropheZone = getZoneFromDb(catastrophe, entityManager);
-            catastrophe.setZone(catastropheZone);
-
+                // Get Zone if in db
+                Zone catastropheZone = getZoneFromDb(catastrophe, entityManager);
+                catastrophe.setZone(catastropheZone);
+            }
             // Save catastrophe
             entityManager.getTransaction().begin();
             entityManager.persist(catastrophe);
@@ -67,20 +69,22 @@ public class DBManager {
     }
 
     private static Catastrophe getCatastropheFromDb(Catastrophe catastrophe, EntityManager entityManager) {
-        Catastrophe dbCatastrophe;
+        Catastrophe dbCatastrophe = null;
         try {
             dbCatastrophe = entityManager.createNamedQuery("findActiveById", Catastrophe.class)
                     .setParameter("name", catastrophe.getName())
                     .setParameter("startdate", catastrophe.getStartDate())
                     .setParameter("eventname", catastrophe.getEvent().getEventName())
                     .setParameter("severity", catastrophe.getEvent().getSeverity())
+                    .setParameter("centerlat", catastrophe.getZone().getCenterLat())
+                    .setParameter("centerlon", catastrophe.getZone().getCenterLon())
                     .getSingleResult(); // TODO Should get all similars...
             System.out.println("   ** Found similar catastrophe in db " + dbCatastrophe.toString());
-            catastrophe = dbCatastrophe; // TODO should update catastrophe if found in db and actually similar, compare zones iou values or something as such
+            // TODO should update catastrophe if found in db and actually similar, compare zones iou values or something as such
         } catch (Exception ignored) {
             System.out.println("    > No matching catastrophe found, inserting new");
         }
-        return catastrophe;
+        return dbCatastrophe;
     }
 
 }
