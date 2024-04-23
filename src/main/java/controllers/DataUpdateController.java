@@ -12,7 +12,7 @@ import java.net.http.HttpResponse;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ProcessController {
+public class DataUpdateController {
 
     public static String API_URL = "https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/esp"; // FETCH events in CValenciana, change 77 to esp for SPAIN range
 
