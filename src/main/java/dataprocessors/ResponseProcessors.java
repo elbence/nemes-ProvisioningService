@@ -105,7 +105,8 @@ public class ResponseProcessors {
         zone.setCenterLat(truncToStringWithTwoDecimals(center.getLat()));
         zone.setCenterLon(truncToStringWithTwoDecimals(center.getLon()));
         zone.setRadius(radius);
-        zone.setPolygons(coordinateList);
+        zone.setPolygon(coordinateList);
+        zone.configureCoordinates();
         return zone;
     }
 

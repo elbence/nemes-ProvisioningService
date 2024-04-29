@@ -13,10 +13,6 @@ import java.util.List;
 @Entity
 public class Zone {
 
-//    @Id
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private Coordinate center;
-
     // mannually added center, don't use coordinate as it will difficult queries
     @Id
     @Column(precision=6, scale=4)
@@ -28,8 +24,8 @@ public class Zone {
 
     private int radius;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Coordinate> polygons;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "zone")
+    private List<Coordinate> polygon;
 
     public Zone() {
     }
@@ -38,16 +34,16 @@ public class Zone {
         return radius;
     }
 
-    public List<Coordinate> getPolygons() {
-        return polygons;
+    public List<Coordinate> getPolygon() {
+        return polygon;
     }
 
     public void setRadius(int radius) {
         this.radius = radius;
     }
 
-    public void setPolygons(List<Coordinate> polygon) {
-        this.polygons = polygon;
+    public void setPolygon(List<Coordinate> polygon) {
+        this.polygon = polygon;
     }
 
     public BigDecimal getCenterLat() {
@@ -72,7 +68,13 @@ public class Zone {
                 "lat=" + centerLat +
                 ", lon=" + centerLon +
                 ", radius=" + radius +
-                ", polygons=" + polygons +
+                ", polygon=" + polygon +
                 '}';
+    }
+
+    public void configureCoordinates() {
+        for (Coordinate coordinate : polygon) {
+            coordinate.setZone(this);
+        }
     }
 }

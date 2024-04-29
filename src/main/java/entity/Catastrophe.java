@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @NamedQueries({
         @NamedQuery(name = "findActiveById", query = "SELECT c FROM Catastrophe c " +
                 "WHERE c.name = :name " +
-//                "AND c.lastValidDate >= CURRENT_DATE " +
+                "AND c.lastValidDate >= CURRENT_DATE " +
                 "AND c.startDate = :startdate " +
                 "AND c.event.eventName = :eventname " +
                 "AND c.event.severity = :severity " +
