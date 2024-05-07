@@ -23,6 +23,7 @@ public class Zone {
     private BigDecimal centerLon;
 
     private int radius;
+    private String descriptiveName;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "zone")
     private List<Coordinate> polygon;
@@ -76,5 +77,13 @@ public class Zone {
         for (Coordinate coordinate : polygon) {
             coordinate.setZone(this);
         }
+    }
+
+    public String getDescriptiveName() {
+        return descriptiveName;
+    }
+
+    public void setDescriptiveName(String descriptiveName) {
+        this.descriptiveName = descriptiveName;
     }
 }

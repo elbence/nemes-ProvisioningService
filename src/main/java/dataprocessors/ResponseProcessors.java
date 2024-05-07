@@ -44,7 +44,7 @@ public class ResponseProcessors {
             // Get event
             Event event;
             event = new Event();
-            event.setEventName(catastropheBaseInfoObject.getJSONObject("eventCode").getString("value"));
+            event.setEventName(catastropheBaseInfoObject.getJSONObject("eventCode").getString("value").substring(2));
             event.setSeverity(severity);
 
             // Get dates
@@ -66,12 +66,13 @@ public class ResponseProcessors {
                 // Get catastrophe name
                 String name = catastropheAct.getString("areaDesc") + " - " + event.getEventName();
 
-                // Get zones FIXME should do a for loop traversing zones...
+                // Get zones FIXME should do a for loop traversing zones... rn only saving first ? needs revision
                 Object rawCoordinates = catastropheAct.get("polygon");
                 String coordinatesAsString;
                 if (rawCoordinates instanceof JSONArray) coordinatesAsString = ((JSONArray) rawCoordinates).getString(0);
                 else coordinatesAsString = (String) rawCoordinates;
                 Zone zone = zoneFromRawStringPolygon(coordinatesAsString);
+                zone.setDescriptiveName(catastropheAct.getString("areaDesc"));
 
                 Catastrophe catastrophe = new Catastrophe();
                 catastrophe.setEvent(event);
