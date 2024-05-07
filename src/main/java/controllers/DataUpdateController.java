@@ -2,6 +2,7 @@ package controllers;
 
 import dataprocessors.ResponseProcessors;
 import dbutils.DBManager;
+import debugutils.HttpFakeResponse;
 import entity.Catastrophe;
 import externaldatafetch.RequestManagers;
 import org.json.JSONObject;
@@ -10,9 +11,12 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataUpdateController {
+
+    private static final boolean DEBUG = true;
 
     public static String API_URL = "https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/77"; // FETCH events in CValenciana, change 77 to esp for SPAIN range
 
@@ -24,18 +28,29 @@ public class DataUpdateController {
         System.out.println("UPDATING DATA WITH NEWEST ALERTS");
         System.out.println("============================================================================================\n");
 
-        HttpClient httpClient = HttpClient.newHttpClient();
+        List<JSONObject> alertsInJson;
 
-        System.out.println("Fetching AEMET data...");
-        HttpResponse<String> initialResponse = RequestManagers.fetchInitialAemetResponse(API_URL, httpClient);
-        if (RequestManagers.checkResponseStatus(initialResponse) != 200) throw new IOException("Data fetching gone wrong");
+        if (DEBUG) {
+            HttpResponse<String> downloadRes = new HttpFakeResponse();
 
-        System.out.println("Processing response and fetching actual data...");
-        HttpResponse<String> downloadRes = RequestManagers.fetchRealDataAfterRedirect(initialResponse, httpClient);
-        if (downloadRes.statusCode() != 200) throw new IOException("Real data fetching gone wrong after redirect");
+            System.out.println("Processing actual data (raw xml string -> json)...");
+            alertsInJson = ResponseProcessors.processAllAlertsInXmlToJsonList(downloadRes);
 
-        System.out.println("Processing actual data (raw xml string -> json)...");
-        List<JSONObject> alertsInJson = ResponseProcessors.processAllAlertsInXmlToJsonList(downloadRes);
+        } else {
+            HttpClient httpClient = HttpClient.newHttpClient();
+
+            System.out.println("Fetching AEMET data...");
+            HttpResponse<String> initialResponse = RequestManagers.fetchInitialAemetResponse(API_URL, httpClient);
+            if (RequestManagers.checkResponseStatus(initialResponse) != 200) throw new IOException("Data fetching gone wrong");
+
+            System.out.println("Processing response and fetching actual data...");
+            HttpResponse<String> downloadRes = RequestManagers.fetchRealDataAfterRedirect(initialResponse, httpClient);
+            if (downloadRes.statusCode() != 200) throw new IOException("Real data fetching gone wrong after redirect");
+
+            System.out.println("Processing actual data (raw xml string -> json)...");
+            alertsInJson = ResponseProcessors.processAllAlertsInXmlToJsonList(downloadRes);
+        }
+
         System.out.print("Found " + alertsInJson.size() + " alerts with following numbers of catastrophes each: ");
         List<Catastrophe> catastrophes = ResponseProcessors.catastrophesFromJsonAlertList(alertsInJson);
         System.out.println("\nFound total catastrophes: " + catastrophes.size());

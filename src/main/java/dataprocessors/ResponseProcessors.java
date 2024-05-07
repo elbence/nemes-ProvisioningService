@@ -44,7 +44,7 @@ public class ResponseProcessors {
             // Get event
             Event event;
             event = new Event();
-            event.setEventName(catastropheBaseInfoObject.getJSONObject("eventCode").getString("value").substring(2));
+            event.setEventName(catastropheBaseInfoObject.getJSONObject("eventCode").getString("value").substring(3));
             event.setSeverity(severity);
 
             // Get dates
