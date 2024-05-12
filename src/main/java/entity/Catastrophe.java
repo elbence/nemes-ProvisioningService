@@ -32,7 +32,7 @@ public class Catastrophe {
     private LocalDate startDate;
     private LocalDate lastValidDate;
     @Id
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumns({
             @JoinColumn(name = "zonecenterlat", referencedColumnName = "centerlat"),
             @JoinColumn(name = "zonecenterlon", referencedColumnName = "centerlon")})
