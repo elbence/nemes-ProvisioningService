@@ -7,7 +7,9 @@ import java.util.List;
 
 
 @NamedQueries({
-        @NamedQuery(name = "findByCenter", query = "SELECT z FROM Zone z WHERE z.centerLat = :lat AND z.centerLon = :lon")
+        @NamedQuery(name = "findByCenter", query = "SELECT z FROM Zone z " +
+                "WHERE abs(z.centerLat - :lat) < 0.001  " +
+                "AND abs(z.centerLon - :lon) < 0.001")
 })
 
 @Entity

@@ -18,7 +18,7 @@ public class DataUpdateController {
 
     private static final boolean DEBUG = false;
 
-    public static String API_URL = "https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/77"; // FETCH events in CValenciana, change 77 to esp for SPAIN range
+    public static String API_URL = "https://opendata.aemet.es/opendata/api/avisos_cap/ultimoelaborado/area/esp"; // FETCH events in CValenciana, change 77 to esp for SPAIN range
 
     // ============================================= MAIN PROCESSING METHOD =============================================
 
