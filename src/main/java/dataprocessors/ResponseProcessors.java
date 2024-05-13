@@ -10,10 +10,13 @@ import org.json.XML;
 
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,7 +115,8 @@ public class ResponseProcessors {
     }
 
     private static BigDecimal truncToStringWithTwoDecimals(float value) {
-        return BigDecimal.valueOf(Float.parseFloat(String.format("%.4f", value)));
+        DecimalFormat df = new DecimalFormat("#.####", DecimalFormatSymbols.getInstance(Locale.US));
+        return BigDecimal.valueOf(Float.parseFloat(df.format(value)));
     }
 
     public static List<Coordinate> parseCoordinates(String polygonString) {
