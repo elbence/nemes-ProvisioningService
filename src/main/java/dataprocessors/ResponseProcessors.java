@@ -10,6 +10,7 @@ import org.json.XML;
 
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
@@ -25,7 +26,8 @@ public class ResponseProcessors {
     public static List<JSONObject> processAllAlertsInXmlToJsonList(HttpResponse<String> downloadRes) {
         String regex = "(?s)<alert[^>]*>.*?</alert>";
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(downloadRes.body());
+        String decodedResponse = new String(downloadRes.body().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        Matcher matcher = pattern.matcher(decodedResponse);
         List<JSONObject> alertsInJson = new ArrayList<>();
         while (matcher.find()) {
             String alertInXml = matcher.group();
