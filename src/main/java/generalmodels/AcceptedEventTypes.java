@@ -4,7 +4,7 @@ public enum AcceptedEventTypes {
     Costeros("Costeros", "Severe", 3),
     Vientos("Vientos", "Moderate", 2),
     Nevadas("Nevadas", "Moderate", 2),
-    Lluvias("Lluvias", "Moderate", 2),
+    Lluvias("Lluvias", "Minor", 1),
     Tormentas("Tormentas", "Moderate", 2),
     Nieblas("Nieblas", "Moderate", 2);
 
