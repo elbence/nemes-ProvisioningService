@@ -10,10 +10,14 @@ import org.json.XML;
 
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +26,8 @@ public class ResponseProcessors {
     public static List<JSONObject> processAllAlertsInXmlToJsonList(HttpResponse<String> downloadRes) {
         String regex = "(?s)<alert[^>]*>.*?</alert>";
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(downloadRes.body());
+        String decodedResponse = new String(downloadRes.body().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        Matcher matcher = pattern.matcher(decodedResponse);
         List<JSONObject> alertsInJson = new ArrayList<>();
         while (matcher.find()) {
             String alertInXml = matcher.group();
@@ -44,7 +49,7 @@ public class ResponseProcessors {
             // Get event
             Event event;
             event = new Event();
-            event.setEventName(catastropheBaseInfoObject.getJSONObject("eventCode").getString("value"));
+            event.setEventName(catastropheBaseInfoObject.getJSONObject("eventCode").getString("value").substring(3));
             event.setSeverity(severity);
 
             // Get dates
@@ -66,12 +71,13 @@ public class ResponseProcessors {
                 // Get catastrophe name
                 String name = catastropheAct.getString("areaDesc") + " - " + event.getEventName();
 
-                // Get zones FIXME should do a for loop traversing zones...
+                // Get zones FIXME should do a for loop traversing zones... rn only saving first ? needs revision
                 Object rawCoordinates = catastropheAct.get("polygon");
                 String coordinatesAsString;
                 if (rawCoordinates instanceof JSONArray) coordinatesAsString = ((JSONArray) rawCoordinates).getString(0);
                 else coordinatesAsString = (String) rawCoordinates;
                 Zone zone = zoneFromRawStringPolygon(coordinatesAsString);
+                zone.setDescriptiveName(catastropheAct.getString("areaDesc"));
 
                 Catastrophe catastrophe = new Catastrophe();
                 catastrophe.setEvent(event);
@@ -105,12 +111,14 @@ public class ResponseProcessors {
         zone.setCenterLat(truncToStringWithTwoDecimals(center.getLat()));
         zone.setCenterLon(truncToStringWithTwoDecimals(center.getLon()));
         zone.setRadius(radius);
-        zone.setPolygons(coordinateList);
+        zone.setPolygon(coordinateList);
+        zone.configureCoordinates();
         return zone;
     }
 
     private static BigDecimal truncToStringWithTwoDecimals(float value) {
-        return BigDecimal.valueOf(Float.parseFloat(String.format("%.4f", value)));
+        DecimalFormat df = new DecimalFormat("#.####", DecimalFormatSymbols.getInstance(Locale.US));
+        return BigDecimal.valueOf(Float.parseFloat(df.format(value)));
     }
 
     public static List<Coordinate> parseCoordinates(String polygonString) {

@@ -7,15 +7,13 @@ import java.util.List;
 
 
 @NamedQueries({
-        @NamedQuery(name = "findByCenter", query = "SELECT z FROM Zone z WHERE z.centerLat = :lat AND z.centerLon = :lon")
+        @NamedQuery(name = "findByCenter", query = "SELECT z FROM Zone z " +
+                "WHERE abs(z.centerLat - :lat) < 0.001  " +
+                "AND abs(z.centerLon - :lon) < 0.001")
 })
 
 @Entity
 public class Zone {
-
-//    @Id
-//    @OneToOne(cascade = CascadeType.ALL)
-//    private Coordinate center;
 
     // mannually added center, don't use coordinate as it will difficult queries
     @Id
@@ -27,9 +25,10 @@ public class Zone {
     private BigDecimal centerLon;
 
     private int radius;
+    private String descriptiveName;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Coordinate> polygons;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "zone")
+    private List<Coordinate> polygon;
 
     public Zone() {
     }
@@ -38,16 +37,16 @@ public class Zone {
         return radius;
     }
 
-    public List<Coordinate> getPolygons() {
-        return polygons;
+    public List<Coordinate> getPolygon() {
+        return polygon;
     }
 
     public void setRadius(int radius) {
         this.radius = radius;
     }
 
-    public void setPolygons(List<Coordinate> polygon) {
-        this.polygons = polygon;
+    public void setPolygon(List<Coordinate> polygon) {
+        this.polygon = polygon;
     }
 
     public BigDecimal getCenterLat() {
@@ -72,7 +71,21 @@ public class Zone {
                 "lat=" + centerLat +
                 ", lon=" + centerLon +
                 ", radius=" + radius +
-                ", polygons=" + polygons +
+                ", polygon=" + polygon +
                 '}';
+    }
+
+    public void configureCoordinates() {
+        for (Coordinate coordinate : polygon) {
+            coordinate.setZone(this);
+        }
+    }
+
+    public String getDescriptiveName() {
+        return descriptiveName;
+    }
+
+    public void setDescriptiveName(String descriptiveName) {
+        this.descriptiveName = descriptiveName;
     }
 }

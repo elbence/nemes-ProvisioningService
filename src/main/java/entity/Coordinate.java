@@ -1,8 +1,6 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Coordinate {
@@ -10,6 +8,14 @@ public class Coordinate {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Id
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "zonecenterlat", referencedColumnName = "centerLat"),
+            @JoinColumn(name = "zonecenterlon", referencedColumnName = "centerLon"),
+    })
+    private Zone zone;
 
     private float lat;
 
@@ -49,5 +55,13 @@ public class Coordinate {
                 ", lat=" + lat +
                 ", lon=" + lon +
                 '}';
+    }
+
+    public Zone getZone() {
+        return zone;
+    }
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
     }
 }
